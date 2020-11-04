@@ -30,6 +30,14 @@ export default function (auth) {
         })
     },
 
+    fetchUser (context) {
+      return auth.drivers.get('http').request('fetchUser')
+        .then(auth.config.apiEndpoints.fetchUser.transformResponse)
+        .then(user => {
+          context.commit('setUser', user)
+        })
+    },
+
     logout (context, credentials) {
       return auth.drivers.get('http').request('logout')
         .then(() => {
