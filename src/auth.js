@@ -84,7 +84,13 @@ export class Auth {
   }
 
   redirectIfNeed () {
-    if (this.router.currentRoute.matched.some(route =>
+    const currentRoute = (this.router.currentRoute.constructor.name === 'RefImpl')
+      // Vue 3
+      ? this.router.currentRoute.value
+      // Vue 2
+      :this.router.currentRoute
+
+    if (currentRoute.matched.some(route =>
       route.meta[this.config.authMeta.key] ===
       this.config.authMeta.value.authenticated
     )) {
@@ -96,11 +102,11 @@ export class Auth {
       if (!this.context.getters.check) {
         // We are not logged, so we need to login first
         this.router.push(deepMerge(
-          { params: { nextUrl: this.router.currentRoute.fullPath } },
+          { params: { nextUrl: currentRoute.fullPath } },
           this.config.redirects.unauthenticated
         ))
       }
-    } else if (this.router.currentRoute.matched.some(route =>
+    } else if (currentRoute.matched.some(route =>
       route.meta[this.config.authMeta.key] ===
       this.config.authMeta.value.unauthenticated
     )) {
@@ -115,11 +121,22 @@ export class Auth {
   /* Proxy actions */
   async initialize () {
     await this.context.dispatch('initialize')
-    this.router.onReady(() => {
-      this.initializeRouterGuard()
-      this.initializeRouterRedirects()
-      this.redirectIfNeed()
-    })
+    // Vue 2
+    if (this.router.onReady) {
+      this.router.onReady(() => {
+        this.initializeRouterGuard()
+        this.initializeRouterRedirects()
+        this.redirectIfNeed()
+      })
+    }
+    // Vue 3
+    else {
+      this.router.isReady().then(() => {
+        this.initializeRouterGuard()
+        this.initializeRouterRedirects()
+        this.redirectIfNeed()
+      })
+    }
   }
   attemptLogin (credentials) {
     return this.context.dispatch('attemptLogin', credentials)
