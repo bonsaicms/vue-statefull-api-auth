@@ -52,7 +52,7 @@ const auth = new Auth({
 auth.initialize()
 ```
 
-### Make `auth` instance accessing inside your Vue components
+### Make `auth` instance accessible inside your Vue components
 
 #### Vue 2
 
