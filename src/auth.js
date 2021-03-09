@@ -23,7 +23,7 @@ export class Auth {
   initializeDrivers () {
     this.drivers = new DriversManager(this)
     this.drivers.register('http', 'axios', axiosHttpDriverFactory);
-    this.drivers.use('http', 'axios', this.config.http.driver)
+    this.drivers.use('http', this.config.http.driver)
   }
 
   initializeStore (store) {
