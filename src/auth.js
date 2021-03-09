@@ -28,8 +28,14 @@ export class Auth {
 
   initializeStore (store) {
     if (!store) {
-      Vue.use(Vuex)
-      store = new Vuex.Store()
+      if (Vuex.createStore) {
+        // Vuex 4
+        store = Vuex.createStore()
+      } else {
+        // Vuex 3
+        Vue.use(Vuex)
+        store = new Vuex.Store()
+      }
     }
     this.store = store
     if (this.config.store.namespaced) {
