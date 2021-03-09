@@ -1,6 +1,6 @@
 {
   "name": "@bonsaicms/vue-statefull-api-auth",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Auth library for Vue.js applications and statefull APIs.",
   "main": "src/index.js",
   "repository": {
