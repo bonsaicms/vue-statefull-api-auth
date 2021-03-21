@@ -1,11 +1,6 @@
-# Authentication layer for Vue applications
+# Authentication layer for Vue 3 applications
 
 This package is designed as an authentication layer for Vue applications in combination with an authentication backend server that provides statefull API (session-based cookie authentication). Example of such a backend implementation is [Larvel Sanctum](https://laravel.com/docs/8.x/sanctum).
-
-## Supported Vue versions
-
-  - [x] Vue 2
-  - [x] Vue 3
 
 ## Install
 
@@ -52,15 +47,7 @@ const auth = new Auth({
 auth.initialize()
 ```
 
-### Make `auth` instance accessible inside your Vue components
-
-#### Vue 2
-
-```js
-Vue.prototype.$auth = auth
-```
-
-#### Vue 3
+### Make `auth` instance accessible inside your Vue 3 components
 
 *`app` is an instance created by Vue 3 `Vue.createApp()`*
 

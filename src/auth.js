@@ -1,4 +1,4 @@
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import { deepMerge } from './utils'
 import { mergeConfig } from './config'
 import createStoreModule from './store'
@@ -28,14 +28,7 @@ export class Auth {
 
   initializeStore (store) {
     if (!store) {
-      if (Vuex.createStore) {
-        // Vuex 4
-        store = Vuex.createStore()
-      } else {
-        // Vuex 3
-        Vue.use(Vuex)
-        store = new Vuex.Store()
-      }
+      store = createStore()
     }
     this.store = store
     if (this.config.store.namespaced) {
@@ -56,7 +49,7 @@ export class Auth {
         return
       }
       if (to.matched.some(route => route.meta[this.config.authMeta.key] === this.config.authMeta.value.authenticated)) {
-        // Accesing route only for authenticated users
+        // Accessing route only for authenticated users
         if (this.context.getters.check) {
           // We are logged, so we can continue
           next()
@@ -68,7 +61,7 @@ export class Auth {
           ))
         }
       } else if (to.matched.some(route => route.meta[this.config.authMeta.key] === this.config.authMeta.value.unauthenticated)) {
-        // Accesing route only for unauthenticated users
+        // Accessing route only for unauthenticated users
         if (this.context.getters.check) {
           // We are logged, so we need to redirect
           next(this.config.redirects.authenticated)
@@ -77,7 +70,7 @@ export class Auth {
           next()
         }
       } else {
-        // Accesing public route (for authenticated and also for unauthenticated users)
+        // Accessing public route (for authenticated and also for unauthenticated users)
         next()
       }
     })
@@ -90,13 +83,7 @@ export class Auth {
   }
 
   redirectIfNeed () {
-    const currentRoute = (this.router.currentRoute.constructor.name === 'RefImpl')
-      // Vue 3
-      ? this.router.currentRoute.value
-      // Vue 2
-      :this.router.currentRoute
-
-    if (currentRoute.matched.some(route =>
+    if (this.router.currentRoute.value.matched.some(route =>
       route.meta[this.config.authMeta.key] ===
       this.config.authMeta.value.authenticated
     )) {
@@ -104,19 +91,19 @@ export class Auth {
       if (!this.context.getters.ready) {
         return
       }
-      // Accesing route only for authenticated users
+      // Accessing route only for authenticated users
       if (!this.context.getters.check) {
         // We are not logged, so we need to login first
         this.router.push(deepMerge(
-          { params: { nextUrl: currentRoute.fullPath } },
+          { params: { nextUrl: this.router.currentRoute.value.fullPath } },
           this.config.redirects.unauthenticated
         ))
       }
-    } else if (currentRoute.matched.some(route =>
+    } else if (this.router.currentRoute.value.matched.some(route =>
       route.meta[this.config.authMeta.key] ===
       this.config.authMeta.value.unauthenticated
     )) {
-      // Accesing route only for unauthenticated users
+      // Accessing route only for unauthenticated users
       if (this.context.getters.check) {
         // We are logged, so we need to redirect
         this.router.push(this.config.redirects.authenticated)
@@ -127,22 +114,11 @@ export class Auth {
   /* Proxy actions */
   async initialize () {
     await this.context.dispatch('initialize')
-    // Vue 2
-    if (this.router.onReady) {
-      this.router.onReady(() => {
-        this.initializeRouterGuard()
-        this.initializeRouterRedirects()
-        this.redirectIfNeed()
-      })
-    }
-    // Vue 3
-    else {
-      this.router.isReady().then(() => {
-        this.initializeRouterGuard()
-        this.initializeRouterRedirects()
-        this.redirectIfNeed()
-      })
-    }
+    this.router.isReady().then(() => {
+      this.initializeRouterGuard()
+      this.initializeRouterRedirects()
+      this.redirectIfNeed()
+    })
   }
   attemptLogin (credentials) {
     return this.context.dispatch('attemptLogin', credentials)
