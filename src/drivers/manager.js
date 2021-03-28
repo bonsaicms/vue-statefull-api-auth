@@ -1,55 +1,59 @@
-export class DriversManager {
-  constructor (auth) {
-    this.auth = auth
-    this.factories = {}
-    this.instances = {}
-    this.active = {}
-  }
+export function createDriversManager (config) {
+  const factories = {}
+  const instances = {}
+  const active = {}
 
-  register (type, name, factoryFunction) {
-    if (!this.factories[type]) {
-      this.factories[type] = {}
+  function register (type, name, factoryFunction) {
+    if (!factories[type]) {
+      factories[type] = {}
     }
-    this.factories[type][name] = factoryFunction
+    factories[type][name] = factoryFunction
   }
 
-  makeInstance (type, name) {
-    if (!this.factories[type][name]) throw new Error(`Cannot make instance for driver with type "${type}" and name "${name}".`)
-    return this.factories[type][name](this.auth.config)
+  function makeInstance (type, name) {
+    if (!factories[type][name]) throw new Error(`Cannot make instance for driver with type "${type}" and name "${name}".`)
+    return factories[type][name](config)
   }
 
-  hasInstance (type, name) {
-    return (this.instances[type] && this.instances[type][name])
+  function hasInstance (type, name) {
+    return (instances[type] && instances[type][name])
   }
 
-  setInstance (type, name, instance) {
-    if (!this.instances[type]) {
-      this.instances[type] = {}
+  function setInstance (type, name, instance) {
+    if (!instances[type]) {
+      instances[type] = {}
     }
-    this.instances[type][name] = instance
+    instances[type][name] = instance
   }
 
-  getInstance (type, name) {
-    return this.instances[type][name]
+  function getInstance (type, name) {
+    return instances[type][name]
   }
 
-  getOrMakeInstance (type, name) {
-    if (!this.hasInstance(type, name)) {
-      this.setInstance(type, name, this.makeInstance(type, name))
+  function getOrMakeInstance (type, name) {
+    if (!hasInstance(type, name)) {
+      setInstance(type, name, makeInstance(type, name))
     }
-    return this.getInstance(type, name)
+    return getInstance(type, name)
   }
 
-  use (type, name) {
-    this.active[type] = name
+  function use (type, name) {
+    active[type] = name
     return this
   }
 
-  using (type) {
-    return this.active[type]
+  function using (type) {
+    return active[type]
   }
 
-  get (type) {
-    return this.getOrMakeInstance(type, this.using(type))
+  function get (type) {
+    return getOrMakeInstance(type, using(type))
+  }
+
+  return {
+    register,
+    use,
+    using,
+    get,
   }
 }

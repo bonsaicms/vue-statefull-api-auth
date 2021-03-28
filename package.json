@@ -1,6 +1,6 @@
 {
   "name": "@bonsaicms/vue-statefull-api-auth",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Auth library for Vue 3 applications and stateful APIs.",
   "main": "src/index.js",
   "repository": {
@@ -19,7 +19,6 @@
     "axios": "^0.21.0",
     "deepmerge": "^4.2.2",
     "vue": "^3.0.0",
-    "vuex": "^4.0.0",
     "vue-router": "^4.0.0"
   },
   "bugs": {

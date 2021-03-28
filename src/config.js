@@ -1,10 +1,6 @@
 import { deepMerge } from './utils'
 
 export const defaultConfig = {
-  store: {
-    namespaced: true,
-    moduleName: 'auth',
-  },
   http: {
     driver: 'axios',
     config: {

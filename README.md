@@ -22,42 +22,29 @@ You need to run this code once while your application is booting.
 
 ```js
 import Vue from 'vue'
-import { Auth } from '@bonsaicms/vue-statefull-api-auth'
+import { createAuth } from '@bonsaicms/vue-statefull-api-auth'
 
-// Import your Vuex store and Vue router instances
-import store from 'src/store'
+// Import your Vue router instance
 import router from 'src/router'
 
-const auth = new Auth({
+const auth = createAuth(
 
-  // Vuex store is optional.
-  // We will create a new Vuex instance if you don't provide your own.
-  store,
-
-  // This is required.
+  // Router instance
   router,
 
   // You can override the default configuration here
   // Default config values can be found here: https://github.com/bonsaicms/vue-statefull-api-auth/blob/master/src/config.js#L3
-  config: { }
-})
+  { }
+)
 
 // Don't forget to initialize the auth
 // By "initialize" we mean "to find out wether the user is logged in or not"
 auth.initialize()
 ```
 
-### Make `auth` instance accessible inside your Vue 3 components
-
-*`app` is an instance created by Vue 3 `Vue.createApp()`*
-
-```js
-app.config.globalProperties.$auth = auth
-```
-
 ## Usage
 
-In the following example we use the `auth` variable. It is the instance created via `new Auth(...)`. You can access this variable as `this.$auth` inside your Vue components.
+In the following example we use the `auth` variable. It is an object created using the `createAuth` function.
 
 ### Getters
 
@@ -117,10 +104,6 @@ If the user **IS** logged in and he/she is trying to visit a route accessible on
 
 ```js
 {
-  store: {
-    namespaced: true,
-    moduleName: 'auth',
-  },
   http: {
     driver: 'axios',
     config: {
