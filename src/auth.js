@@ -88,6 +88,24 @@ export function createAuth (router, cfg = {}) {
     }
   }
 
+  const _onReadyResolvers = []
+
+  async function isReady () {
+    if (_ready.value) {
+      return Promise.resolve()
+    } else {
+      return new Promise((resolve, reject) => {
+        _onReadyResolvers.push(resolve)
+      })
+    }
+  }
+
+  function _resolveOnReady () {
+    for (const resolve of _onReadyResolvers) {
+      resolve()
+    }
+  }
+
   async function initialize () {
     if (config.apiEndpoints.setCsrfCookie) {
       await drivers.get('http').request('setCsrfCookie')
@@ -108,6 +126,7 @@ export function createAuth (router, cfg = {}) {
           _initializeRouterGuard()
           redirectIfNeed()
         })
+        _resolveOnReady()
       })
   }
 
@@ -156,5 +175,6 @@ export function createAuth (router, cfg = {}) {
     attemptLogin,
     fetchUser,
     logout,
+    isReady,
   }
 }
