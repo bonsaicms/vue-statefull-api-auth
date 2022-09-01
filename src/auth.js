@@ -106,10 +106,14 @@ export function createAuth (router, cfg = {}) {
     }
   }
 
-  async function initialize () {
+  async function setCsrfCookie () {
     if (config.apiEndpoints.setCsrfCookie) {
-      await drivers.get('http').request('setCsrfCookie')
+      return drivers.get('http').request('setCsrfCookie')
     }
+  }
+
+  async function initialize () {
+    await setCsrfCookie()
     return drivers.get('http').request('fetchUser')
       .then(config.apiEndpoints.fetchUser.transformResponse)
       .then(user => {
@@ -171,6 +175,7 @@ export function createAuth (router, cfg = {}) {
     logged,
     user,
     redirectIfNeed,
+    setCsrfCookie,
     initialize,
     attemptLogin,
     fetchUser,
